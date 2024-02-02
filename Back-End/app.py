@@ -17,6 +17,10 @@ def signUp():
 def data():
     return "data"
 
+@app.route("/chat-bot", methods=['GET', 'POST'])
+def chatBot():
+    return "chat-bot"
+
 
 @app.route('/solution', methods=['GET', 'POST'])
 def solution():
