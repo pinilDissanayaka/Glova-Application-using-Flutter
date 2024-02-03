@@ -1,4 +1,4 @@
-# glova
+# Glova
 
 Glova Skin care mobile app.
 
