@@ -36,7 +36,7 @@ def chatBot():
 @app.route('/solution', methods=['GET', 'POST'])
 def solution():
     ai=gen.ImageClassification("hi")
-    responce = ai.fetchFromGen()
+    responce = ai.geminiResponce()
     if responce:
         return responce
     else:

@@ -1,4 +1,5 @@
 import os
+from langchain.prompts import PromptTemplate 
 import google.generativeai as genai
 
 
@@ -11,15 +12,15 @@ class ImageClassification(object):
         self._skinType=skinType
         self._prompt=skinType 
         
-    def fetchFromGen(self) -> str:
+    def geminiResponce(self) -> str:
         try:
             self._responce=self._model.generate_content(self._prompt, stream=True)
             for chunk in self._responce:
-                self._text = ''.join(chunk.text) 
+                self._responce_ = ''.join(chunk.text) 
             
-            self._text = self._text.replace("*", " ")
+            self._responce_ = self._responce_.replace("*", " ")
 
-            return self._text
+            return self._responce_
         except:
             return False
             
