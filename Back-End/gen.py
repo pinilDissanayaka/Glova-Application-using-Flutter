@@ -7,12 +7,12 @@ class Solution(object):
         os.environ['GOOGLE_API_KEY']= r"AIzaSyBUd99N6xQQmy-233yhwEJnLXH_4oNRJzE" #API KEY
         genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
         
-        generation_config={
+        self._generation_config={
                         'temperature':0, 
-                        'max_output_tokens': 600
+                        'max_output_tokens': 300
                     }
         
-        safety_settings = [
+        self._safety_settings=[
             {
                 "category": "HARM_CATEGORY_DANGEROUS",
                 "threshold": "BLOCK_NONE",
@@ -34,7 +34,8 @@ class Solution(object):
                 "threshold": "BLOCK_NONE",
             },
         ]
-        self._model = genai.GenerativeModel('gemini-pro',generation_config=generation_config)
+        
+        self._model = genai.GenerativeModel('gemini-pro')
         
         self._skinType=skinType
         self._prompt= f"Identify this skin disease as a blackheads and assume that this skin disease on a {self._skinType} skin. please genarate a complete description about the disease, why this disease occurs and genarate that ways can be use to prevent and avoid this skin disease at descriptive manner."
@@ -43,7 +44,7 @@ class Solution(object):
         
     def geminiResponce(self) -> str:
         try:
-            self._response=self._model.generate_content(self._prompt, stream=True)
+            self._response=self._model.generate_content(self._prompt, stream=False)
             for chunk in self._response:
                self._response_ = ''.join(chunk.text) 
             
