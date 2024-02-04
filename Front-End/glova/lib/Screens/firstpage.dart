@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:glova/Screens/login.dart';
+import 'package:glova/Screens/second_page.dart';
 
 class FirstPage extends StatelessWidget {
   @override
@@ -12,15 +13,32 @@ class FirstPage extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: Center(
+        child: Align(
+          alignment: const Alignment(0, 0.8),
           child: ElevatedButton(
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Login_Page()), // Corrected class name
+                MaterialPageRoute(
+                    builder: (context) => Second_Page()), // Corrected class name
               );
             },
-            child: const Text('Continue'), // Updated button text
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF004080),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10), // Border radius
+              ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Padding
+            ), // Change button color here
+
+            child: const Text(
+              'Continue',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
+            ), // Updated button text
           ),
         ),
       ),
