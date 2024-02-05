@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:glova/Screens/login.dart';
+import 'package:glova/Screens/signIn.dart';
 import 'package:glova/Screens/signUp.dart';
+
 
 class Second_Page extends StatelessWidget {
   @override
@@ -15,6 +16,7 @@ class Second_Page extends StatelessWidget {
         ),
         child: Stack(
           children: [
+            //Title
             const FractionallySizedBox(
               widthFactor: 0.7,
               child: Align(
@@ -32,6 +34,8 @@ class Second_Page extends StatelessWidget {
                 ),
               ),
             ),
+
+            //small sentence
             const FractionallySizedBox(
               widthFactor: 0.9,
               child: Align(
@@ -48,6 +52,8 @@ class Second_Page extends StatelessWidget {
                 ),
               ),
             ),
+
+            //Sign Up Button
             Align(
               alignment: const Alignment(-0.65, 0.7),
               child: ElevatedButton(
@@ -74,13 +80,15 @@ class Second_Page extends StatelessWidget {
                 ),
               ),
             ),
+
+            //Sign In Button
             Align(
               alignment: const Alignment(0.65, 0.7),
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Login_Page()),
+                    MaterialPageRoute(builder: (context) => SignIn_Page()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
