@@ -38,9 +38,9 @@ def solution():
     ai=gen.Solution("oily skin")
     responce = ai.geminiResponce()
     if responce:
-        return responce
+        return jsonify({'response' : responce})
     else:
-        return "OOPS.. Something Went Wrong"
+        return jsonify({'responce' : False})
 
 if __name__=="__main__":
     app.run(debug=True)
