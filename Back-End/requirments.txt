@@ -1,0 +1,7 @@
+os
+generativeai
+langchain
+flask
+flask_mysqldb
+MySQLdb
+
