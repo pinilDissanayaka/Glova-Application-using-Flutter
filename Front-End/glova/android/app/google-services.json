@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "10232607140",
+    "project_id": "glova-mobile-app",
+    "storage_bucket": "glova-mobile-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:10232607140:android:b74d9841d09f32140d9131",
+        "android_client_info": {
+          "package_name": "com.Zyndicate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOA1y8ult4wcxD1jfwNmfl0CAxLTW348o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
