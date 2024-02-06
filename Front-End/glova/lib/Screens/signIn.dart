@@ -61,6 +61,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
     }
   }
 
+  //error showing method
   void showErrorDialog(String errorMessage) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -104,7 +105,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
                   child: Text(
                     'Sign In',
                     style: TextStyle(
-                      fontSize: 34,
+                      fontSize: 40,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF423838),
                     ),
@@ -115,16 +116,24 @@ class _SignIn_PageState extends State<SignIn_Page> {
 
             //Email Text Field
             Align(
-              alignment: const Alignment(0, -0.2),
+              alignment: const Alignment(0, -0.15),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 30.0, vertical: 20.0),
                 child: TextField(
                   controller: emailController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     prefixIcon: Icon(Icons.email),
                     hintText: 'Email Address',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      borderSide: BorderSide(
+                        color: Colors.blue, // Border color
+                        width: 2.0, // Border width
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: const Color(0xFF282635).withOpacity(0.5),
                   ),
                 ),
               ),
@@ -133,16 +142,24 @@ class _SignIn_PageState extends State<SignIn_Page> {
 
             //Password Text Field
             Align(
-              alignment: const Alignment(0, 0.1),
+              alignment: const Alignment(0, 0.06),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 30.0, vertical: 20.0),
                 child: TextField(
                   controller: passwordController,
-                  decoration: const InputDecoration(
+                  decoration:  InputDecoration(
                     prefixIcon: Icon(Icons.lock),
                     hintText: 'Password',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      borderSide: BorderSide(
+                        color: Colors.blue, // Border color
+                        width: 2.0, // Border width
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: const Color(0xFF282635).withOpacity(0.5),
                   ),
                 ),
               ),
