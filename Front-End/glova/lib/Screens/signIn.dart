@@ -1,6 +1,41 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:glova/Screens/home_page.dart';
 
-class SignIn_Page extends StatelessWidget {
+import 'auth_page.dart';
+
+class SignIn_Page extends StatefulWidget {
+  @override
+  State<SignIn_Page> createState() => _SignIn_PageState();
+}
+
+class _SignIn_PageState extends State<SignIn_Page> {
+  // text editing controllers
+  final emailController = TextEditingController();
+
+  final passwordController = TextEditingController();
+
+  bool isLoading = false;
+
+  // sign user in method
+  void signUserIn() async {
+
+    // show loading circle
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(), password: passwordController.text);
+
+  }
+
   @override
   Widget build(BuildContext context) {
     String imagePath = "assets/google_icon.png";
@@ -34,12 +69,13 @@ class SignIn_Page extends StatelessWidget {
             ),
 
             //Email Text Field
-            const Align(
-              alignment: Alignment(0, -0.2),
+            Align(
+              alignment: const Alignment(0, -0.2),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
                 child: TextField(
-                  decoration: InputDecoration(
+                  controller: emailController,
+                  decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.email),
                     hintText: 'Email Address',
                     border: OutlineInputBorder(),
@@ -47,15 +83,16 @@ class SignIn_Page extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             //Password Text Field
-            const Align(
-              alignment: Alignment(0, 0.1),
+            Align(
+              alignment: const Alignment(0, 0.1),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
                 child: TextField(
-                  decoration: InputDecoration(
+                  controller: passwordController,
+                  decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.lock),
                     hintText: 'Password',
                     border: OutlineInputBorder(),
@@ -77,9 +114,7 @@ class SignIn_Page extends StatelessWidget {
             Align(
               alignment: const Alignment(0, 0.4),
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: signUserIn,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF004080),
                   shape: RoundedRectangleBorder(
@@ -130,7 +165,7 @@ class SignIn_Page extends StatelessWidget {
             Align(
               alignment: const Alignment(0, 0.7),
               child: Container(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(16),
@@ -142,8 +177,6 @@ class SignIn_Page extends StatelessWidget {
                 ),
               ),
             ),
-
-
           ],
         ),
       ),
