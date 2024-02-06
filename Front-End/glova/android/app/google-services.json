@@ -7,12 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:10232607140:android:b74d9841d09f32140d9131",
+        "mobilesdk_app_id": "1:10232607140:android:8dd87dd4cefc8f1d0d9131",
         "android_client_info": {
-          "package_name": "com.Zyndicate"
+          "package_name": "Zyndicate.team.glova"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "10232607140-70q99vm7viurs44fdttma3pu4ecsg9gl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDOA1y8ult4wcxD1jfwNmfl0CAxLTW348o"
@@ -20,7 +25,41 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "10232607140-70q99vm7viurs44fdttma3pu4ecsg9gl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:10232607140:android:b74d9841d09f32140d9131",
+        "android_client_info": {
+          "package_name": "com.Zyndicate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "10232607140-70q99vm7viurs44fdttma3pu4ecsg9gl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOA1y8ult4wcxD1jfwNmfl0CAxLTW348o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "10232607140-70q99vm7viurs44fdttma3pu4ecsg9gl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
