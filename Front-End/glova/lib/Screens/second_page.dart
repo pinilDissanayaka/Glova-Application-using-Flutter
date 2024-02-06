@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:glova/Screens/auth_page.dart';
 import 'package:glova/Screens/signIn.dart';
 import 'package:glova/Screens/signUp.dart';
 
@@ -88,7 +89,7 @@ class Second_Page extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SignIn_Page()),
+                    MaterialPageRoute(builder: (context) => AuthPage()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
