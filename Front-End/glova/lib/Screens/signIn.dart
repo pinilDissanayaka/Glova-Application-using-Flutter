@@ -20,7 +20,6 @@ class _SignIn_PageState extends State<SignIn_Page> {
 
   // sign user in method
   void signUserIn() async {
-
     // show loading circle
     showDialog(
       context: context,
@@ -31,9 +30,55 @@ class _SignIn_PageState extends State<SignIn_Page> {
       },
     );
 
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(), password: passwordController.text);
+    // try sign in
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      // pop the loading circle
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      // pop the loading circle
+      Navigator.pop(context);
 
+      String errorMessage = 'An error occurred';
+      // WRONG EMAIL
+      if (e.code == 'user-not-found') {
+        // show error to user
+        errorMessage = 'user-not-found';
+        showErrorDialog(errorMessage);
+      }
+
+      // WRONG PASSWORD
+      else if (e.code == 'wrong-password') {
+        // show error to user
+        errorMessage = 'wrong-password';
+        showErrorDialog(errorMessage);
+      }
+      // show error to user
+      showErrorDialog(errorMessage);
+    }
+  }
+
+  void showErrorDialog(String errorMessage) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          errorMessage,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16.0,
+          ),
+        ),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ),
+    );
   }
 
   @override
@@ -72,7 +117,8 @@ class _SignIn_PageState extends State<SignIn_Page> {
             Align(
               alignment: const Alignment(0, -0.2),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 30.0, vertical: 20.0),
                 child: TextField(
                   controller: emailController,
                   decoration: const InputDecoration(
@@ -89,7 +135,8 @@ class _SignIn_PageState extends State<SignIn_Page> {
             Align(
               alignment: const Alignment(0, 0.1),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 30.0, vertical: 20.0),
                 child: TextField(
                   controller: passwordController,
                   decoration: const InputDecoration(
