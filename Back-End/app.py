@@ -28,6 +28,7 @@ def signUp():
 def data():
     return "data"
 
+
 @app.route("/chat-bot", methods=['GET', 'POST'])
 def chatBot():
     return "chat-bot"
@@ -35,12 +36,13 @@ def chatBot():
 
 @app.route('/solution', methods=['GET', 'POST'])
 def solution():
-    ai=gen.ImageClassification("hi")
-    responce = ai.fetchFromGen()
+    ai=gen.Solution("oily skin")
+    responce = ai.geminiResponce()
     if responce:
-        return responce
+        return jsonify({'response' : responce})
     else:
-        return "OOPS.. Something Went Wrong"
+        return jsonify({'responce' : False})
+
 
 if __name__=="__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
