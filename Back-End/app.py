@@ -1,5 +1,8 @@
+import os
+import PIL
 from flask import Flask, request, jsonify, session
 from flask_bcrypt import Bcrypt
+import werkzeug
 from pymongo import MongoClient
 import gen
 
@@ -14,15 +17,18 @@ db = client['Glova']
 
 @app.route("/sign-in", methods=['GET', 'POST'])
 def signIn():
+    
     emailAddress = str(request.args['emailAddress'])
     password = str(request.args['password'])
     collection = db['Users']
     
     user = collection.find_one({"emailAddress" : emailAddress})
+    
     if (user == None):
         responce = False
     else:
         isValid = bcrypt.check_password_hash(user['password'], password)
+        
         if(isValid):
             responce = user['username']
             
@@ -31,7 +37,6 @@ def signIn():
             
         else:
             responce = False
-        
     return jsonify({'responce' : responce})
 
 
@@ -52,7 +57,7 @@ def signUp():
         responce = True
     else:
         responce = False
-    
+
     return jsonify({'responce': responce})
 
 @app.route("/logout", methods = ['GET', 'POST'])
@@ -60,6 +65,22 @@ def logout():
     session.pop('loggedIn', None)
     session.pop('username', None)
     
+
+@app.route("/update", methods = ['GET', 'POST'])
+def update():
+    
+    if session['loggedIn'] == True:
+        username = str(request.args['username'])
+        emailAddress = str(request.args['emailAddress'])
+        phoneNumber = str(request.args['phoneNumber'])
+        gender = str(request.args['gender'])
+        address = str(request.args['address'])
+        
+        collection = db['Users']
+        collection.update_one({'username' : session['username']}, {'$set' : {'username' : username, 'emailAddress' : emailAddress, 'phoneNumber' : phoneNumber, 'gender' : gender, 'address' : address}})
+        
+        session['username'] = username
+            
     
 @app.route("/data", methods=['GET', 'POST'])
 def data():
@@ -73,8 +94,16 @@ def chatBot():
 
 @app.route('/solution', methods=['GET', 'POST'])
 def solution():
+    
+    imageFile=request.files['image']
+    fileName=werkzeug.utils.secure_filename(imageFile.filename)
+    saveDir=os.path.join("upload", fileName)
+    imageFile.save(saveDir)
+    
     ai=gen.Solution("oily skin")
-    responce = ai.geminiResponce()
+    
+    responce = ai.geminiResponce(imagePath=saveDir)
+    
     if responce:
         return jsonify({'response' : responce})
     else:
