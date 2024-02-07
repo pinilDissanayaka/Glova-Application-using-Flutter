@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:glova/Screens/apiTest.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -27,6 +28,8 @@ class HomePage extends StatelessWidget {
       body: Center(
         child: Stack(
           children: [
+
+            //Hello Text
             Align(
               alignment: const Alignment(-0.7, -0.95),
               child: Padding(
@@ -46,9 +49,39 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
+
+            //Notification Icon
             const Align(
               alignment: Alignment(0.8, -0.93),
               child: Icon(Icons.notifications),
+            ),
+
+            //Api test button
+            Align(
+              alignment: const Alignment(-0.65, 0.7),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ApiTest()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xffffffff),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), // Border radius
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30, vertical: 15), // Padding
+                ), // Change button color here
+                child: const Text(
+                  'Api test',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
