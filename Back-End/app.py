@@ -28,6 +28,7 @@ def signUp():
 def data():
     return "data"
 
+
 @app.route("/chat-bot", methods=['GET', 'POST'])
 def chatBot():
     return "chat-bot"
@@ -41,6 +42,7 @@ def solution():
         return jsonify({'response' : responce})
     else:
         return jsonify({'responce' : False})
+
 
 if __name__=="__main__":
     app.run(debug=True)
