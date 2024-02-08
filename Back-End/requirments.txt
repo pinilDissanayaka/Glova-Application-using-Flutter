@@ -1,7 +1,9 @@
 os
+PIL
 generativeai
 langchain
 flask
-flask_mysqldb
-MySQLdb
+flask_bcrypt
+werkzeug
+pymongo
 
