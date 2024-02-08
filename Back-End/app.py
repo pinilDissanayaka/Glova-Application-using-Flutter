@@ -33,6 +33,7 @@ def signIn():
             responce = user['username']
             
             session['loggedIn'] = True
+            session['userId'] = user['_id']
             session['username'] = user['username']
             
         else:
@@ -63,6 +64,7 @@ def signUp():
 @app.route("/logout", methods = ['GET', 'POST'])
 def logout():
     session.pop('loggedIn', None)
+    session.pop('userId', None)
     session.pop('username', None)
     
 
@@ -77,13 +79,17 @@ def update():
         address = str(request.args['address'])
         
         collection = db['Users']
-        collection.update_one({'username' : session['username']}, {'$set' : {'username' : username, 'emailAddress' : emailAddress, 'phoneNumber' : phoneNumber, 'gender' : gender, 'address' : address}})
+        collection.update_one({'_id' : session['userId']}, {'$set' : {'username' : username, 'emailAddress' : emailAddress, 'phoneNumber' : phoneNumber, 'gender' : gender, 'address' : address}})
         
         session['username'] = username
             
     
 @app.route("/data", methods=['GET', 'POST'])
 def data():
+    skinType = str(request.args['skinType'])
+    skinTone = str(request.args['skinTone'])
+    skinConcern = list(request.args['skinConcern'])
+    print(skinConcern)
     return "data"
 
 
