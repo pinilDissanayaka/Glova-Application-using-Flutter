@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../main.dart';
 import 'home_page.dart';
 
 class SignUp_Page extends StatefulWidget {
@@ -16,7 +17,7 @@ class _SignUpPageState extends State<SignUp_Page> {
   TextEditingController passwordController = TextEditingController();
 
   // Function to send sign-up data to Flask server
-  void signUp() async {
+  Future<HomePage> signUp() async {
     // Replace parameters with user input
     var username = usernameController.text;
     var email = emailController.text;
@@ -32,18 +33,21 @@ class _SignUpPageState extends State<SignUp_Page> {
       var data = json.decode(response.body);
       print('Response: $data');
 
+      var responce = data['responce'];
+      // print(responce['status']);
+
+      return HomePage();
+
       // Check the response data to determine success
-      if (data['success']) {
-        // If successful, navigate to the home page
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-      } else {
-        // Handle other cases when the server response indicates failure
-        print('Error: ${data['error']}');
-      }
+      // if (responce['status'] == 'success') {
+      //     return HomePage();
+      // } else {
+      //   // Handle other cases when the server response indicates failure
+      //   print('Error: ${responce['error']}');
+      //   return HomePage();
+      // }
     }
+    return signUp();
   }
 
   @override
@@ -182,3 +186,4 @@ class _SignUpPageState extends State<SignUp_Page> {
     );
   }
 }
+
