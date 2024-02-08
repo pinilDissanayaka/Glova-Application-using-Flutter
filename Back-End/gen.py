@@ -5,7 +5,7 @@ import PIL
 
 
 class Solution(object):
-    def __init__(self, skinType : str) -> None:
+    def __init__(self, skinType : str, skinTone : str) -> None:
         os.environ['GOOGLE_API_KEY']= r"AIzaSyBUd99N6xQQmy-233yhwEJnLXH_4oNRJzE" #API KEY
         genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
         
@@ -40,8 +40,9 @@ class Solution(object):
         self._model = genai.GenerativeModel('gemini-pro-vision')
         
         self._skinType=skinType
-        self._prompt= "Identify this skin disease on this picture and assume that this skin disease on a {skinType} skin. please genarate a complete description about the disease, why this disease occurs and genarate that ways can be use to prevent and avoid this skin disease at descriptive manner."
-        self._template = PromptTemplate(input_variables=['skinType'], 
+        self._skinTone=skinTone
+        self._prompt= "Identify this skin disease on this picture and assume that this skin disease on a {skinType} type {skinTone} skin. please genarate a complete description about the disease, why this disease occurs and genarate that ways can be use to prevent and avoid this skin disease at descriptive manner."
+        self._template = PromptTemplate(input_variables=['skinType', 'skinTone'], 
                                         template=self._prompt)
           
                         
@@ -49,7 +50,7 @@ class Solution(object):
     def geminiResponce(self, imagePath : str) -> str:
         try:
             imageFile=PIL.Image.open(imagePath)
-            self._response=self._model.generate_content([self._template.format(skinType=self._skinType), imageFile], stream=False)
+            self._response=self._model.generate_content([self._template.format(skinType=self._skinType, skinTone=self._skinTone), imageFile], stream=False)
                 
             for chunk in self._response:
                 self._response_ = ''.join(chunk.text) 
