@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:glova/Screens/apiTest.dart';
+import 'package:glova/Screens/chatBot.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -63,7 +63,7 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ApiTest()),
+                    MaterialPageRoute(builder: (context) => ChatBots()),
                   );
                 },
                 style: ElevatedButton.styleFrom(

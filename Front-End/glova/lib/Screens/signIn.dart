@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:glova/Screens/home_page.dart';
+import 'package:glova/Screens/signUp.dart';
 
 import 'auth_page.dart';
 
@@ -193,6 +194,24 @@ class _SignIn_PageState extends State<SignIn_Page> {
                     color: Colors.white,
                     fontSize: 18,
                   ),
+                ),
+              ),
+            ),
+
+            //Sign Up
+            Align(
+              alignment: const Alignment(0.7, 0.2),
+              child: ElevatedButton(
+                onPressed: () {
+                  // Navigate to the second page when the button is pressed
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignUp_Page()),
+                  );
+                },
+                child: Text(
+                  'sign up',
+                  style: TextStyle(color: Colors.grey[600]),
                 ),
               ),
             ),
