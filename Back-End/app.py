@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify, session
 from flask_bcrypt import Bcrypt
 import werkzeug
 from pymongo import MongoClient
+from data import ConvertData
 import gen
 
 app=Flask(__name__)
@@ -55,7 +56,14 @@ def signUp():
     if (ifExsist == None):
         password = bcrypt.generate_password_hash(password).decode('utf-8')
         collection.insert_one({"username" : username, "emailAddress" : emailAddress, "phoneNumber" : phoneNumber, "password" : password})
-        responce = True
+        
+        responce = collection['username']
+            
+        session['loggedIn'] = True
+        session['userId'] = collection['_id']
+        session['emailAddress'] = collection['emailAddress']
+        session['username'] = collection['username']
+        
     else:
         responce = False
 
@@ -63,9 +71,13 @@ def signUp():
 
 @app.route("/logout", methods = ['GET', 'POST'])
 def logout():
+    
     session.pop('loggedIn', None)
     session.pop('userId', None)
+    session.pop('emailAddress', None)
     session.pop('username', None)
+    
+    return jsonify({'response' : True})
     
 
 @app.route("/update", methods = ['GET', 'POST'])
@@ -79,18 +91,44 @@ def update():
         address = str(request.args['address'])
         
         collection = db['Users']
-        collection.update_one({'_id' : session['userId']}, {'$set' : {'username' : username, 'emailAddress' : emailAddress, 'phoneNumber' : phoneNumber, 'gender' : gender, 'address' : address}})
+        
+        collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'username' : "username", 'emailAddress' : emailAddress, 'phoneNumber' : phoneNumber, 'gender' : gender, 'address' : address}})
         
         session['username'] = username
-            
+        session['emailAddress'] = emailAddress
+        
+        
+@app.route("/skin-data", methods=['GET', 'POST'])
+def skinData():
+    skinTypeNo = int(request.args['skinType'])
+    skinToneNo = int(request.args['skinTone'])
+    skinConcernNoList = list(request.args['skinConcern'])
+
+    convertData = ConvertData()
+    skinType, skinTone, skinConcernList = convertData.convertSkinData(skinTypeNo=skinTypeNo, skinToneNo=skinToneNo, skinConcernNoList=skinConcernNoList)
     
-@app.route("/data", methods=['GET', 'POST'])
-def data():
-    skinType = str(request.args['skinType'])
-    skinTone = str(request.args['skinTone'])
-    skinConcern = list(request.args['skinConcern'])
-    print(skinConcern)
-    return "data"
+    collection=db['Users']
+
+
+    collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'skinType' : skinType, 'skinTone' : skinTone, 'skinConcernList' : skinConcernList}})
+    
+    return jsonify({'response' : True})
+
+
+'''
+@app.route("/get-category", methods=['GET', 'POST'])
+def getCategory():
+
+    categoryNoList = list(request.args['categoryNo'])
+
+    convertData = ConvertData()
+    categoryList = convertData.convertSkinData(categoryNoList=categoryNoList)
+    
+    collection=db['Users']
+    collection.update_one({'emailAddress' : collection['_id']}, {'$set' : {'skinType' : skinType, 'skinTone' : skinTone, 'skinConcernList' : skinConcernList}})
+    
+    return jsonify({'response' : True})
+'''
 
 
 @app.route("/chat-bot", methods=['GET', 'POST'])
