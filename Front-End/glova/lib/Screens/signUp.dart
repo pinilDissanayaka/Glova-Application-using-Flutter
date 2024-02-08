@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:glova/Screens/chatBot.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -17,7 +18,7 @@ class _SignUpPageState extends State<SignUp_Page> {
   TextEditingController passwordController = TextEditingController();
 
   // Function to send sign-up data to Flask server
-  Future<HomePage> signUp() async {
+  Future<Widget> signUp() async {
     // Replace parameters with user input
     var username = usernameController.text;
     var email = emailController.text;
@@ -34,20 +35,22 @@ class _SignUpPageState extends State<SignUp_Page> {
       print('Response: $data');
 
       var responce = data['responce'];
-      // print(responce['status']);
-
-      return HomePage();
+      print(responce['status']);
 
       // Check the response data to determine success
-      // if (responce['status'] == 'success') {
-      //     return HomePage();
-      // } else {
-      //   // Handle other cases when the server response indicates failure
-      //   print('Error: ${responce['error']}');
-      //   return HomePage();
-      // }
+      if (responce['status'] == 'success') {
+          print("kadk");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatBots()),
+          );
+
+      } else {
+        // Handle other cases when the server response indicates failure
+        print('Error: ${responce['error']}');
+      }
     }
-    return signUp();
+    return SignUp_Page();
   }
 
   @override
