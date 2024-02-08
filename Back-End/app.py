@@ -1,12 +1,15 @@
 import os
 from flask import Flask, request, jsonify, session
+from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 import werkzeug
 from pymongo import MongoClient
+import bson
 from data import ConvertData
 import gen
 
 app=Flask(__name__)
+CORS(app, origins='http://localhost:62458')
 app.secret_key = "123456789"
 bcrypt = Bcrypt(app)
 
@@ -17,28 +20,29 @@ db = client['Glova']
 
 @app.route("/sign-in", methods=['GET', 'POST'])
 def signIn():
-    
     emailAddress = str(request.args['emailAddress'])
     password = str(request.args['password'])
-    collection = db['Users']
     
+    collection = db['Users']
     user = collection.find_one({"emailAddress" : emailAddress})
     
     if user is None:
-        responce = False
+        responce=False
     else:
         isValid = bcrypt.check_password_hash(user['password'], password)
         
         if(isValid):
-            responce = user['username']
-            
+    
             session['loggedIn'] = True
-            session['userId'] = user['_id']
+            session['emailAddress'] = emailAddress
             session['username'] = user['username']
             
+            responce=user['username'] 
+        
         else:
-            responce = False
-    return jsonify({'responce' : responce})
+            responce=False
+        
+    return jsonify({"responce":responce})
 
 
 @app.route("/sign-up", methods=['GET', 'POST'])
@@ -54,26 +58,24 @@ def signUp():
     
     if ifExsist is None:
         password = bcrypt.generate_password_hash(password).decode('utf-8')
-        collection.insert_one({"username" : username, "emailAddress" : emailAddress, "phoneNumber" : phoneNumber, "password" : password})
         
-        responce = collection['username']
+        collection.insert_one({"username" : username, "emailAddress" : emailAddress, "phoneNumber" : phoneNumber, "password" : password})
             
         session['loggedIn'] = True
-        session['userId'] = collection['_id']
-        session['emailAddress'] = collection['emailAddress']
-        session['username'] = collection['username']
+        session['emailAddress'] = emailAddress
+        session['username']=username
+        responce = username
         
     else:
-        responce = False
+        responce=False
 
-    return jsonify({'responce': responce})
+    return jsonify({"responce" : responce})
 
 
 @app.route("/logout", methods = ['GET', 'POST'])
 def logout():
     
     session.pop('loggedIn', None)
-    session.pop('userId', None)
     session.pop('emailAddress', None)
     session.pop('username', None)
     
