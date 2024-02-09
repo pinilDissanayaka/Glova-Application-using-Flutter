@@ -68,6 +68,11 @@ flutter:
    - assets/secondPageBg.png
    - assets/SignInBg.png
    - assets/google_icon.png
+   - assets/Acne Prone.png
+   - assets/Combination.png
+   - assets/Dry.png
+   - assets/Normal.png
+   - assets/Oily.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

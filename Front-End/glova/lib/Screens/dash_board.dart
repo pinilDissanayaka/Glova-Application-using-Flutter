@@ -1,18 +1,9 @@
-/*
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:glova/Screens/chatBot.dart';
-import 'package:glova/Screens/skin_select.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({super.key});
-
-  final user = FirebaseAuth.instance.currentUser!;
-
-  // sign user out method
-  void signUserOut() {
-    FirebaseAuth.instance.signOut();
-  }
+class DashBoard extends StatelessWidget {
+  DashBoard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +12,13 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFFADD8E6),
         actions: [
+          //back Button
           IconButton(
-            onPressed: signUserOut,
-            icon: Icon(Icons.logout),
-          )
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.logout),
+          ),
         ],
       ),
       body: Center(
@@ -32,20 +26,15 @@ class HomePage extends StatelessWidget {
           children: [
 
             //Hello Text
-            Align(
-              alignment: const Alignment(-0.7, -0.95),
+            const Align(
+              alignment: Alignment(-0.7, -0.95),
               child: Padding(
-                padding: const EdgeInsets.only(left: 20.0),
+                padding: EdgeInsets.only(left: 20.0),
                 child: Row(
                   children: [
-                    const Text("Hello,",
+                    Text("Hello,",
                         style: TextStyle(
                           fontSize: 20,
-                        )),
-                    Text(user.email!,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
                         )),
                   ],
                 ),
@@ -65,7 +54,7 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Skin_Select()),
+                    MaterialPageRoute(builder: (context) => ChatBots()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -91,4 +80,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-*/

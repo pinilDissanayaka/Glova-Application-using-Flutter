@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:glova/Screens/dash_board.dart';
 import 'package:glova/Screens/home_page.dart';
 import 'package:glova/Screens/signUp.dart';
+import 'package:glova/Screens/skin_select.dart';
 
 import 'auth_page.dart';
 
@@ -179,7 +181,12 @@ class _SignIn_PageState extends State<SignIn_Page> {
             Align(
               alignment: const Alignment(0, 0.4),
               child: ElevatedButton(
-                onPressed: signUserIn,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DashBoard()),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF004080),
                   shape: RoundedRectangleBorder(
