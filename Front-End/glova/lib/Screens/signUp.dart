@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glova/Screens/chatBot.dart';
+import 'package:glova/Screens/dash_board.dart';
+import 'package:glova/Screens/skin_select.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -39,10 +41,9 @@ class _SignUpPageState extends State<SignUp_Page> {
 
       // Check the response data to determine success
       if (responce['status'] == 'success') {
-          print("kadk");
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ChatBots()),
+            MaterialPageRoute(builder: (context) => Skin_Select()),
           );
 
       } else {
