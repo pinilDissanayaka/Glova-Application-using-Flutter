@@ -27,7 +27,7 @@ def signIn():
     user = collection.find_one({"emailAddress" : emailAddress})
     
     if user is None:
-        responce=False
+        responce={"status": "User not found", 'username': None}
     else:
         isValid = bcrypt.check_password_hash(user['password'], password)
         
@@ -37,10 +37,10 @@ def signIn():
             session['emailAddress'] = emailAddress
             session['username'] = user['username']
             
-            responce=user['username'] 
+            responce={"status": "success", 'username': user['username']}
         
         else:
-            responce=False
+            responce={"status": "Invalid password", 'username': None}
         
     return jsonify({"responce":responce})
 
@@ -64,10 +64,11 @@ def signUp():
         session['loggedIn'] = True
         session['emailAddress'] = emailAddress
         session['username']=username
-        responce = username
+        
+        responce={"status": "success", 'username': username}
         
     else:
-        responce=False
+        responce={"status": "unsuccess", 'username': None}
 
     return jsonify({"responce" : responce})
 
@@ -79,7 +80,7 @@ def logout():
     session.pop('emailAddress', None)
     session.pop('username', None)
     
-    return jsonify({'response' : True})
+    return jsonify({"status": "success"})
     
 
 @app.route("/update", methods = ['GET', 'POST'])
@@ -100,6 +101,8 @@ def update():
         session['username'] = username
         session['emailAddress'] = emailAddress
         
+    return jsonify({"status": "success", 'username': username})
+        
         
 @app.route("/skin-data", methods=['GET', 'POST'])
 def skinData():
@@ -115,7 +118,7 @@ def skinData():
 
     collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'skinType' : skinType, 'skinTone' : skinTone, 'skinConcernList' : skinConcernList}})
     
-    return jsonify({'response' : True})
+    return jsonify({"status": "success"})
 
 
 '''
@@ -156,9 +159,10 @@ def solution():
         responce = ai.geminiResponce(imagePath=saveDir)
     
     if responce:
-        return jsonify({'response' : responce})
+        return jsonify({"status": "success", 'prompt': responce})
     else:
-        return jsonify({'responce' : False})
+        return jsonify({"status": "unsuccess", 'prompt': None})
+
 
 
 if __name__=="__main__":
