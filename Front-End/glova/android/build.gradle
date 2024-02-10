@@ -1,11 +1,3 @@
-plugins {
-    // ...
-
-    // Add the dependency for the Google services Gradle plugin
-    id("com.google.gms.google-services") version "4.4.0" apply false
-
-}
-
 buildscript {
     ext.kotlin_version = '1.7.10'
     repositories {
@@ -18,6 +10,16 @@ buildscript {
 //        classpath "com.google.gms:google-services:4.4.0"
     }
 }
+
+plugins {
+    // ...
+
+    // Add the dependency for the Google services Gradle plugin
+    id("com.google.gms.google-services") version "4.4.0" apply false
+
+}
+
+
 
 allprojects {
     repositories {
