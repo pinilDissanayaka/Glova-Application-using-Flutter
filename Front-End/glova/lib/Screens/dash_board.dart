@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:glova/Screens/chatBot.dart';
+import 'package:glova/Screens/upload_image.dart';
 
 class DashBoard extends StatelessWidget {
   DashBoard({super.key});
@@ -54,7 +55,7 @@ class DashBoard extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ChatBots()),
+                    MaterialPageRoute(builder: (context) => Upload_Images()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
