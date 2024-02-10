@@ -2,24 +2,20 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
-from flask_bcrypt import Bcrypt
 import werkzeug
-from pymongo import MongoClient
-import bson
-from data import ConvertData
-import gen
+from utils.data import ConvertData
+from utils.user import User
+from utils.product import Product
+import utils.gen as gen
 
-load_dotenv()
+load_dotenv(".env")
 
-
+#App configurations
 app=Flask(__name__)
 CORS(app, origins=os.getenv('APP_ORIGINS'))
 app.secret_key = os.getenv('APP_SECRECT_KEY')
-bcrypt = Bcrypt(app)
+user=User(app=app)
 
-#DB configurations
-client = MongoClient(os.getenv('MONGO_CLIENT'))
-db = client['Glova']
 
 
 @app.route("/sign-in", methods=['GET', 'POST'])
@@ -27,24 +23,12 @@ def signIn():
     emailAddress = str(request.args['emailAddress'])
     password = str(request.args['password'])
     
-    collection = db['Users']
-    user = collection.find_one({"emailAddress" : emailAddress})
+    status, user_=user.logInUser(emailAddress=emailAddress, password=password)
     
-    if user is None:
-        responce={"status": "User not found", 'username': None}
+    if not status:
+        responce={"status": status, 'username': user_['username']}
     else:
-        isValid = bcrypt.check_password_hash(user['password'], password)
-        
-        if(isValid):
-    
-            session['loggedIn'] = True
-            session['emailAddress'] = emailAddress
-            session['username'] = user['username']
-            
-            responce={"status": "success", 'username': user['username']}
-        
-        else:
-            responce={"status": "Invalid password", 'username': None}
+        responce={"status": status, 'username': None}
         
     return jsonify({"responce":responce})
 
@@ -56,15 +40,9 @@ def signUp():
     phoneNumber = str(request.args['phoneNumber'])
     password = str(request.args['password'])
         
-    collection = db['Users']
+    status=user.addUser(username=username, emailAddress=emailAddress, phoneNumber=phoneNumber, password=password)
     
-    ifExsist = collection.find_one({"emailAddress" : emailAddress})
-    
-    if ifExsist is None:
-        password = bcrypt.generate_password_hash(password).decode('utf-8')
-        
-        collection.insert_one({"username" : username, "emailAddress" : emailAddress, "phoneNumber" : phoneNumber, "password" : password})
-            
+    if status:
         session['loggedIn'] = True
         session['emailAddress'] = emailAddress
         session['username']=username
@@ -93,31 +71,31 @@ def update():
     if session['loggedIn'] is True:
         
         username = str(request.args['username'])
-        emailAddress = str(request.args['emailAddress'])
+        emailAddressEdited = str(request.args['emailAddress'])
+        emailAddress=session['emailAddress']
         phoneNumber = str(request.args['phoneNumber'])
         gender = str(request.args['gender'])
         address = str(request.args['address'])
-        
-        collection = db['Users']
+                
         
         if not username is None:
-            collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'username' : username}})
-            session['username'] = username
-            
-        elif not emailAddress is None:
-            collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'emailAddress' : emailAddress}})
+            status=user.updateUser(emailAddress=emailAddress, username=username)  
+            session['username']=username
+        if not emailAddress is None:
+            status=user.updateUser(emailAddress=emailAddress, emailAddressEdited=emailAddressEdited)
             session['emailAddress'] = emailAddress
+        if not phoneNumber is None:
+            status=user.updateUser(emailAddress=emailAddress, phoneNumber=phoneNumber)
+        if not gender is None:
+            status=user.updateUser(emailAddress=emailAddress, gender=gender)
+        if not address is None:
+            status=user.updateUser(emailAddress=emailAddress, address=address)
             
-        elif not phoneNumber is None:
-            collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'phoneNumber' : phoneNumber}})
-            
-        elif not gender is None:
-            collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'gender' : gender}})
-            
-        elif not address is None:
-            collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'address' : address}})   
     
-    return jsonify({"status": "success", 'username': username})
+        responce={"status" : status, "username" : session['username']}
+            
+    
+    return jsonify({"responce": responce})
         
         
         
@@ -126,16 +104,17 @@ def update():
 def skinData():
     skinTypeNo = int(request.args['skinType'])
     skinToneNo = int(request.args['skinTone'])
+    emailAddress=request.args['emailAddress']
+    
     skinConcernNoList = list(request.args['skinConcern'])
 
     convertData = ConvertData()
     skinType, skinTone, skinConcernList = convertData.convertSkinData(skinTypeNo=skinTypeNo, skinToneNo=skinToneNo, skinConcernNoList=skinConcernNoList)
+    #emailAddress= session['emailAddress']
     
-    collection=db['Users']
+    status=user.updateUser(emailAddress=emailAddress, skinType=skinType, skinTone=skinTone, skinConcernList=skinConcernList)
 
-    try:
-        collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'skinType' : skinType, 'skinTone' : skinTone, 'skinConcernList' : skinConcernList}})
-    except:
+    if status:
         return jsonify({"status": "success"})
     else:
         return jsonify({"status": "unsuccess"})
@@ -173,10 +152,10 @@ def solution():
         
         emailAddress = session['emailAddress']
         
-        collection = db['Users']
-        user = collection.find_one({"emailAddress" : emailAddress})
+    
+        _, user_ = user.getUserByEmail(emailAddress=emailAddress)
         
-        ai=gen.Solution(skinType=user['skinType'], skinTone=user['skinTone'])
+        ai=gen.Solution(skinType=user_['skinType'], skinTone=user_['skinTone'])
         responce = ai.geminiResponce(imagePath=saveDir)
     
     if responce:

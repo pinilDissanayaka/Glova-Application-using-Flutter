@@ -6,4 +6,5 @@ flask
 flask_bcrypt
 werkzeug
 pymongo
+dotenv
 
