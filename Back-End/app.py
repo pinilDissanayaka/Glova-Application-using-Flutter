@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
@@ -8,13 +9,16 @@ import bson
 from data import ConvertData
 import gen
 
+load_dotenv()
+
+
 app=Flask(__name__)
-CORS(app, origins='http://localhost:62458')
-app.secret_key = "123456789"
+CORS(app, origins=os.getenv('APP_ORIGINS'))
+app.secret_key = os.getenv('APP_SECRECT_KEY')
 bcrypt = Bcrypt(app)
 
 #DB configurations
-client = MongoClient('mongodb://localhost:27017')
+client = MongoClient(os.getenv('MONGO_CLIENT'))
 db = client['Glova']
 
 
@@ -96,12 +100,26 @@ def update():
         
         collection = db['Users']
         
-        collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'username' : "username", 'emailAddress' : emailAddress, 'phoneNumber' : phoneNumber, 'gender' : gender, 'address' : address}})
-        
-        session['username'] = username
-        session['emailAddress'] = emailAddress
-        
+        if not username is None:
+            collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'username' : username}})
+            session['username'] = username
+            
+        elif not emailAddress is None:
+            collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'emailAddress' : emailAddress}})
+            session['emailAddress'] = emailAddress
+            
+        elif not phoneNumber is None:
+            collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'phoneNumber' : phoneNumber}})
+            
+        elif not gender is None:
+            collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'gender' : gender}})
+            
+        elif not address is None:
+            collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'address' : address}})   
+    
     return jsonify({"status": "success", 'username': username})
+        
+        
         
         
 @app.route("/skin-data", methods=['GET', 'POST'])
@@ -115,10 +133,13 @@ def skinData():
     
     collection=db['Users']
 
-
-    collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'skinType' : skinType, 'skinTone' : skinTone, 'skinConcernList' : skinConcernList}})
+    try:
+        collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'skinType' : skinType, 'skinTone' : skinTone, 'skinConcernList' : skinConcernList}})
+    except:
+        return jsonify({"status": "success"})
+    else:
+        return jsonify({"status": "unsuccess"})
     
-    return jsonify({"status": "success"})
 
 
 '''
