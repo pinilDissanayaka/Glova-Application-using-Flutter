@@ -68,7 +68,7 @@ def logout():
 @app.route("/update", methods = ['GET', 'POST'])
 def update():
     
-    if session['loggedIn'] is True:
+    if session['loggedIn']:
         
         username = str(request.args['username'])
         emailAddressEdited = str(request.args['emailAddress'])
@@ -93,7 +93,25 @@ def update():
             
     
         responce={"status" : status, "username" : session['username']}
+    else:
+        responce={"status" : status, "username" : None}
             
+    
+    return jsonify({"responce": responce})
+
+@app.route("/delete-user", methos=['GET', 'POST'])
+def deleteUser():
+    emailAddress=session['emailAddress']
+    status=user.deleteUser(emailAddress=emailAddress)
+    
+    session.pop('loggedIn', None)
+    session.pop('emailAddress', None)
+    session.pop('username', None)
+    
+    if status:
+        responce={"status": "success"}
+    else:
+        responce={"status": "unsuccess"}
     
     return jsonify({"responce": responce})
         
@@ -102,22 +120,28 @@ def update():
         
 @app.route("/skin-data", methods=['GET', 'POST'])
 def skinData():
-    skinTypeNo = int(request.args['skinType'])
-    skinToneNo = int(request.args['skinTone'])
-    emailAddress=request.args['emailAddress']
-    
-    skinConcernNoList = list(request.args['skinConcern'])
+    if session['loggedIn']:
+        skinTypeNo = int(request.args['skinType'])
+        skinToneNo = int(request.args['skinTone'])
+        emailAddress=session['emailAddress']
+        
+        skinConcernNoList = list(request.args['skinConcern'])
 
-    convertData = ConvertData()
-    skinType, skinTone, skinConcernList = convertData.convertSkinData(skinTypeNo=skinTypeNo, skinToneNo=skinToneNo, skinConcernNoList=skinConcernNoList)
-    #emailAddress= session['emailAddress']
-    
-    status=user.updateUser(emailAddress=emailAddress, skinType=skinType, skinTone=skinTone, skinConcernList=skinConcernList)
+        convertData = ConvertData()
+        skinType, skinTone, skinConcernList = convertData.convertSkinData(skinTypeNo=skinTypeNo, skinToneNo=skinToneNo, skinConcernNoList=skinConcernNoList)
+        
+        
+        status=user.updateUser(emailAddress=emailAddress, skinType=skinType, skinTone=skinTone, skinConcernList=skinConcernList)
 
-    if status:
-        return jsonify({"status": "success"})
+        if status:
+            responce={"status": "success"}
+        else:
+            responce={"status": "unsuccess"}
     else:
-        return jsonify({"status": "unsuccess"})
+        responce={"status": "unsuccess"}
+        
+    return jsonify({"responce": responce})
+    
     
 
 
