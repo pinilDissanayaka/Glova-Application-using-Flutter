@@ -25,12 +25,17 @@ def signIn():
     
     status, user_=user.logInUser(emailAddress=emailAddress, password=password)
     
-    if not status:
+    if status == "Loging successfull":
         responce={"status": status, 'username': user_['username']}
-    else:
+        
+    elif status == "Incorrect password":
         responce={"status": status, 'username': None}
         
-    return jsonify({"responce":responce})
+    elif status == "User not found":
+        responce={"status": status, 'username': None}
+        
+        
+    return jsonify({"responce": responce})
 
 
 @app.route("/validate-password", methods=['GET', 'POST'])
@@ -116,7 +121,7 @@ def update():
     return jsonify({"responce": responce})
 
 
-@app.route("/delete-user", methos=['GET', 'POST'])
+@app.route("/delete-user", methods=['GET', 'POST'])
 def deleteUser():
     emailAddress=session['emailAddress']
     status=user.deleteUser(emailAddress=emailAddress)

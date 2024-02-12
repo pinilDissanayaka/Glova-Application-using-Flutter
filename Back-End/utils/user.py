@@ -65,6 +65,7 @@ class User(object):
             
         return status, user
     
+    
     def logInUser(self, emailAddress:str, password:str):
         try:
             client, collection, connectionStatus=User.connectDB()
@@ -166,15 +167,15 @@ class User(object):
         if not re.search(r'[a-z]', password):
             status="Password must contains at least one lowercase letter"
 
-        # Check if password contains at least one digit
         if not re.search(r'[0-9]', password):
             status="Password must contains at least one digit"
 
-        # Check if password contains at least one special character
         if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
             status="Password must contain at least one special character"
         
         return status
+        
+
 
         
 
