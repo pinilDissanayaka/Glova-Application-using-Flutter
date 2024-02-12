@@ -2,6 +2,7 @@ import os
 from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
 from pymongo import MongoClient
+import re
 
 load_dotenv(".env")
 
@@ -151,6 +152,27 @@ class User(object):
                 status=False
         finally:
             client.close()
+        
+        return status
+    
+
+    def validatePassword(password : str):
+        
+        status="Valid password"
+        
+        if len(password) < 6:
+            status="Password must contains at least 6 charactors"
+        
+        if not re.search(r'[a-z]', password):
+            status="Password must contains at least one lowercase letter"
+
+        # Check if password contains at least one digit
+        if not re.search(r'[0-9]', password):
+            status="Password must contains at least one digit"
+
+        # Check if password contains at least one special character
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+            status="Password must contain at least one special character"
         
         return status
 
