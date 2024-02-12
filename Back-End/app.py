@@ -33,6 +33,18 @@ def signIn():
     return jsonify({"responce":responce})
 
 
+@app.route("/validate-password", methods=['GET', 'POST'])
+def validatePassword():
+    password = str(request.args['password'])
+    
+    status=user.validatePassword(password=password)
+    
+    responce={"status": status}
+    
+    return jsonify({"responce" : responce})
+
+
+
 @app.route("/sign-up", methods=['GET', 'POST'])
 def signUp():
     username = str(request.args['username'])
@@ -55,6 +67,7 @@ def signUp():
     return jsonify({"responce" : responce})
 
 
+
 @app.route("/logout", methods = ['GET', 'POST'])
 def logout():
     
@@ -62,7 +75,10 @@ def logout():
     session.pop('emailAddress', None)
     session.pop('username', None)
     
-    return jsonify({"status": "success"})
+    responce={"status": "success"}
+    
+    return jsonify({"responce" : responce})
+    
     
 
 @app.route("/update", methods = ['GET', 'POST'])
@@ -98,6 +114,7 @@ def update():
             
     
     return jsonify({"responce": responce})
+
 
 @app.route("/delete-user", methos=['GET', 'POST'])
 def deleteUser():
@@ -180,12 +197,16 @@ def solution():
         _, user_ = user.getUserByEmail(emailAddress=emailAddress)
         
         ai=gen.Solution(skinType=user_['skinType'], skinTone=user_['skinTone'])
-        responce = ai.geminiResponce(imagePath=saveDir)
+        promt = ai.geminiResponce(imagePath=saveDir)
     
-    if responce:
-        return jsonify({"status": "success", 'prompt': responce})
+    if promt:
+        responce={"status": "success", 'prompt': promt}
+        
     else:
-        return jsonify({"status": "unsuccess", 'prompt': None})
+        responce={"status": "success", 'prompt': None}
+
+    
+    return jsonify({"responce" : responce})
 
 
 

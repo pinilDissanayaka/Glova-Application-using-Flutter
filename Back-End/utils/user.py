@@ -156,7 +156,7 @@ class User(object):
         return status
     
 
-    def validatePassword(password : str):
+    def validatePassword(self, password : str):
         
         status="Valid password"
         
