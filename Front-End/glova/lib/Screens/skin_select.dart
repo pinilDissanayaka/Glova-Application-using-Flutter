@@ -86,7 +86,7 @@ class _Skin_SelectState extends State<Skin_Select> {
     String skinConcern = getHighlightedIndex(isHighlightedConcerns);
 
     // Your Flask backend URL
-    final String backendUrl = 'http://127.0.0.1:5000/skin-data';
+    final String backendUrl = 'http://10.0.2.2:5000/skin-data';
 
     // Perform the HTTP request
     try {

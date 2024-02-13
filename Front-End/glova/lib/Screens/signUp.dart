@@ -28,7 +28,7 @@ class _SignUpPageState extends State<SignUp_Page> {
     var password = passwordController.text;
 
     var url =
-        'http://127.0.0.1:5000/sign-up?username=$username&emailAddress=$email&phoneNumber=$phoneNumber&password=$password';
+        'http://10.0.2.2:5000/sign-up?username=$username&emailAddress=$email&phoneNumber=$phoneNumber&password=$password';
 
     var response = await http.post(Uri.parse(url));
 
