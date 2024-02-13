@@ -34,7 +34,7 @@ class _Upload_ImagesState extends State<Upload_Images> {
         return;
       }
 
-      const url = 'http://127.0.0.1:5000/solution'; // Replace with your Flask backend URL
+      const url = 'http://10.0.2.2:5000/solution'; // Replace with your Flask backend URL
 
       // Create a multipart request
       var request = http.MultipartRequest('POST', Uri.parse(url));
