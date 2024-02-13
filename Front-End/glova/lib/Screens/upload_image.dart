@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:glova/Screens/chatBot.dart';
 import 'package:glova/Screens/upload_image.dart';
+import 'package:http/http.dart' as http;
 
 class Upload_Images extends StatefulWidget {
   Upload_Images({Key? key}) : super(key: key);
@@ -26,6 +27,41 @@ class _Upload_ImagesState extends State<Upload_Images> {
         print('No image selected.');
       }
     });
+  }
+
+    Future<void> _uploadImage() async {
+      if (_image == null) {
+        return;
+      }
+
+      const url = 'http://127.0.0.1:5000/solution'; // Replace with your Flask backend URL
+
+      // Create a multipart request
+      var request = http.MultipartRequest('POST', Uri.parse(url));
+
+
+      // Add the image to the request
+      request.files.add(await http.MultipartFile.fromPath('image', _image!.path));
+
+      try {
+        // Send the request
+        print(request);
+        var response = await request.send();
+
+        // Check the response status
+        if (response.statusCode == 200) {
+          // Successful upload
+          print('Image uploaded successfully');
+        } else {
+          // Handle error
+          print('Failed to upload image. Status code: ${response.statusCode}');
+        }
+      } catch (error) {
+        // Handle error
+        print('Error uploading image: $error');
+      }
+
+
   }
 
   @override
@@ -60,10 +96,20 @@ class _Upload_ImagesState extends State<Upload_Images> {
             Positioned(
               bottom: 20,
               right: 20,
-              child: FloatingActionButton(
-                onPressed: _getImage,
-                tooltip: 'Pick Image',
-                child: Icon(Icons.add_a_photo),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    onPressed: _getImage,
+                    tooltip: 'Pick Image',
+                    child: Icon(Icons.add_a_photo),
+                  ),
+                  SizedBox(width: 16), // Add some space between buttons
+                  ElevatedButton(
+                    onPressed: _uploadImage,
+                    child: Text('Upload Image'),
+                  ),
+                ],
               ),
             ),
           ],
