@@ -1,12 +1,12 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:glova/Screens/dash_board.dart';
 import 'package:glova/Screens/home_page.dart';
 import 'package:glova/Screens/signUp.dart';
 import 'package:glova/Screens/skin_select.dart';
-
-import 'auth_page.dart';
+import 'package:http/http.dart' as http;
 
 class SignIn_Page extends StatefulWidget {
   @override
@@ -24,17 +24,42 @@ class _SignIn_PageState extends State<SignIn_Page> {
   // sign user in method
   void signUserIn() async {
     // show loading circle
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
+    // showDialog(
+    //   context: context,
+    //   builder: (context) {
+    //     return const Center(
+    //       child: CircularProgressIndicator(),
+    //     );
+    //   },
+    // );
 
+    var email = emailController.text;
+    var password = passwordController.text;
+
+    var url = 'http://10.0.2.2:5000/sign-in?emailAddress=b&password=1';
+
+    var response = await http.post(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      print('Response: $data');
+
+      var responce = data['responce'];
+      print(responce['status']);
+
+      // Check the response data to determine success
+      if (responce['status'] == 'success') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DashBoard()),
+        );
+      } else {
+        // Handle other cases when the server response indicates failure
+        print('Error: ${responce['error']}');
+      }
+    }
     // try sign in
-    try {
+    /* try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
@@ -61,7 +86,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
       }
       // show error to user
       showErrorDialog(errorMessage);
-    }
+    }*/
   }
 
   //error showing method
@@ -90,7 +115,9 @@ class _SignIn_PageState extends State<SignIn_Page> {
     String imagePath = "assets/google_icon.png";
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
+        height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/SignInBg.png'),
@@ -151,7 +178,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
                     horizontal: 30.0, vertical: 20.0),
                 child: TextField(
                   controller: passwordController,
-                  decoration:  InputDecoration(
+                  decoration: InputDecoration(
                     prefixIcon: Icon(Icons.lock),
                     hintText: 'Password',
                     border: const OutlineInputBorder(
@@ -172,7 +199,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
             Align(
               alignment: const Alignment(0.7, 0.2),
               child: Text(
-                'Forgot Password?',
+                'Forgot Your Password?',
                 style: TextStyle(color: Colors.grey[600]),
               ),
             ),
@@ -181,12 +208,7 @@ class _SignIn_PageState extends State<SignIn_Page> {
             Align(
               alignment: const Alignment(0, 0.4),
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DashBoard()),
-                  );
-                },
+                onPressed: signUserIn,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF004080),
                   shape: RoundedRectangleBorder(
@@ -205,23 +227,34 @@ class _SignIn_PageState extends State<SignIn_Page> {
               ),
             ),
 
-            //Sign Up
-            Align(
-              alignment: const Alignment(0.7, 0.2),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Navigate to the second page when the button is pressed
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SignUp_Page()),
-                  );
-                },
+            // Did You Have Account?
+            const Align(
+              alignment: Alignment(0, 0.5),
+              child: Text(
+                'Did You Have Account?',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+
+            //sign Up
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SignUp_Page(),
+                  ),
+                );
+              },
+              child: Align(
+                alignment: const Alignment(0.7, 0.5),
                 child: Text(
-                  'sign up',
+                  'Sign Up',
                   style: TextStyle(color: Colors.grey[600]),
                 ),
               ),
             ),
+
 
             //OR
             Align(

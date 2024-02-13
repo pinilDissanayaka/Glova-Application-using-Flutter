@@ -41,11 +41,10 @@ class _SignUpPageState extends State<SignUp_Page> {
 
       // Check the response data to determine success
       if (responce['status'] == 'success') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Skin_Select()),
-          );
-
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Skin_Select()),
+        );
       } else {
         // Handle other cases when the server response indicates failure
         print('Error: ${responce['error']}');
@@ -57,6 +56,7 @@ class _SignUpPageState extends State<SignUp_Page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           ElevatedButton(
@@ -67,9 +67,23 @@ class _SignUpPageState extends State<SignUp_Page> {
             child: Text('Go Back'),
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(10.0),
             child:
-            Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+               const Align(
+                  alignment: Alignment(-1, -0.5),
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 30.0),
+                    child: Text(
+                      'Sign Up',
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF423838),
+                      ),
+                    ),
+                  ),
+                ),
               //Username
               Align(
                 alignment: const Alignment(0, 0.06),
@@ -190,4 +204,3 @@ class _SignUpPageState extends State<SignUp_Page> {
     );
   }
 }
-
