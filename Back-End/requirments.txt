@@ -1,4 +1,5 @@
 os
+re
 PIL
 generativeai
 langchain
@@ -6,4 +7,5 @@ flask
 flask_bcrypt
 werkzeug
 pymongo
+dotenv
 

@@ -1,21 +1,21 @@
 import os
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
-from flask_bcrypt import Bcrypt
 import werkzeug
-from pymongo import MongoClient
-import bson
-from data import ConvertData
-import gen
+from utils.data import ConvertData
+from utils.user import User
+from utils.product import Product
+import utils.gen as gen
 
+load_dotenv(".env")
+
+#App configurations
 app=Flask(__name__)
-CORS(app, origins='http://localhost:62458')
-app.secret_key = "123456789"
-bcrypt = Bcrypt(app)
+CORS(app, origins=os.getenv('APP_ORIGINS'))
+app.secret_key = os.getenv('APP_SECRECT_KEY')
+user=User(app=app)
 
-#DB configurations
-client = MongoClient('mongodb://localhost:27017')
-db = client['Glova']
 
 
 @app.route("/sign-in", methods=['GET', 'POST'])
@@ -23,26 +23,31 @@ def signIn():
     emailAddress = str(request.args['emailAddress'])
     password = str(request.args['password'])
     
-    collection = db['Users']
-    user = collection.find_one({"emailAddress" : emailAddress})
+    status, user_=user.logInUser(emailAddress=emailAddress, password=password)
     
-    if user is None:
-        responce=False
-    else:
-        isValid = bcrypt.check_password_hash(user['password'], password)
+    if status == "Loging successfull":
+        responce={"status": status, 'username': user_['username']}
         
-        if(isValid):
+    elif status == "Incorrect password":
+        responce={"status": status, 'username': None}
+        
+    elif status == "User not found":
+        responce={"status": status, 'username': None}
+        
+        
+    return jsonify({"responce": responce})
+
+
+@app.route("/validate-password", methods=['GET', 'POST'])
+def validatePassword():
+    password = str(request.args['password'])
     
-            session['loggedIn'] = True
-            session['emailAddress'] = emailAddress
-            session['username'] = user['username']
-            
-            responce=user['username'] 
-        
-        else:
-            responce=False
-        
-    return jsonify({"responce":responce})
+    status=user.validatePassword(password=password)
+    
+    responce={"status": status}
+    
+    return jsonify({"responce" : responce})
+
 
 
 @app.route("/sign-up", methods=['GET', 'POST'])
@@ -52,24 +57,20 @@ def signUp():
     phoneNumber = str(request.args['phoneNumber'])
     password = str(request.args['password'])
         
-    collection = db['Users']
+    status=user.addUser(username=username, emailAddress=emailAddress, phoneNumber=phoneNumber, password=password)
     
-    ifExsist = collection.find_one({"emailAddress" : emailAddress})
-    
-    if ifExsist is None:
-        password = bcrypt.generate_password_hash(password).decode('utf-8')
-        
-        collection.insert_one({"username" : username, "emailAddress" : emailAddress, "phoneNumber" : phoneNumber, "password" : password})
-            
+    if status:
         session['loggedIn'] = True
         session['emailAddress'] = emailAddress
         session['username']=username
-        responce = username
+        
+        responce={"status": "success", 'username': username}
         
     else:
-        responce=False
+        responce={"status": "unsuccess", 'username': None}
 
     return jsonify({"responce" : responce})
+
 
 
 @app.route("/logout", methods = ['GET', 'POST'])
@@ -79,43 +80,91 @@ def logout():
     session.pop('emailAddress', None)
     session.pop('username', None)
     
-    return jsonify({'response' : True})
+    responce={"status": "success"}
+    
+    return jsonify({"responce" : responce})
+    
     
 
 @app.route("/update", methods = ['GET', 'POST'])
 def update():
     
-    if session['loggedIn'] is True:
+    if session['loggedIn']:
         
         username = str(request.args['username'])
-        emailAddress = str(request.args['emailAddress'])
+        emailAddressEdited = str(request.args['emailAddress'])
+        emailAddress=session['emailAddress']
         phoneNumber = str(request.args['phoneNumber'])
         gender = str(request.args['gender'])
         address = str(request.args['address'])
+                
         
-        collection = db['Users']
+        if not username is None:
+            status=user.updateUser(emailAddress=emailAddress, username=username)  
+            session['username']=username
+        if not emailAddress is None:
+            status=user.updateUser(emailAddress=emailAddress, emailAddressEdited=emailAddressEdited)
+            session['emailAddress'] = emailAddress
+        if not phoneNumber is None:
+            status=user.updateUser(emailAddress=emailAddress, phoneNumber=phoneNumber)
+        if not gender is None:
+            status=user.updateUser(emailAddress=emailAddress, gender=gender)
+        if not address is None:
+            status=user.updateUser(emailAddress=emailAddress, address=address)
+            
+    
+        responce={"status" : status, "username" : session['username']}
+    else:
+        responce={"status" : status, "username" : None}
+            
+    
+    return jsonify({"responce": responce})
+
+
+@app.route("/delete-user", methods=['GET', 'POST'])
+def deleteUser():
+    emailAddress=session['emailAddress']
+    status=user.deleteUser(emailAddress=emailAddress)
+    
+    session.pop('loggedIn', None)
+    session.pop('emailAddress', None)
+    session.pop('username', None)
+    
+    if status:
+        responce={"status": "success"}
+    else:
+        responce={"status": "unsuccess"}
+    
+    return jsonify({"responce": responce})
         
-        collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'username' : "username", 'emailAddress' : emailAddress, 'phoneNumber' : phoneNumber, 'gender' : gender, 'address' : address}})
         
-        session['username'] = username
-        session['emailAddress'] = emailAddress
         
         
 @app.route("/skin-data", methods=['GET', 'POST'])
 def skinData():
-    skinTypeNo = int(request.args['skinType'])
-    skinToneNo = int(request.args['skinTone'])
-    skinConcernNoList = list(request.args['skinConcern'])
+    if session['loggedIn']:
+        skinTypeNo = int(request.args['skinType'])
+        skinToneNo = int(request.args['skinTone'])
+        emailAddress=session['emailAddress']
+        
+        skinConcernNoList = list(request.args['skinConcern'])
 
-    convertData = ConvertData()
-    skinType, skinTone, skinConcernList = convertData.convertSkinData(skinTypeNo=skinTypeNo, skinToneNo=skinToneNo, skinConcernNoList=skinConcernNoList)
+        convertData = ConvertData()
+        skinType, skinTone, skinConcernList = convertData.convertSkinData(skinTypeNo=skinTypeNo, skinToneNo=skinToneNo, skinConcernNoList=skinConcernNoList)
+        
+        
+        status=user.updateUser(emailAddress=emailAddress, skinType=skinType, skinTone=skinTone, skinConcernList=skinConcernList)
+
+        if status:
+            responce={"status": "success"}
+        else:
+            responce={"status": "unsuccess"}
+    else:
+        responce={"status": "unsuccess"}
+        
+    return jsonify({"responce": responce})
     
-    collection=db['Users']
-
-
-    collection.update_one({'emailAddress' : session['emailAddress']}, {'$set' : {'skinType' : skinType, 'skinTone' : skinTone, 'skinConcernList' : skinConcernList}})
     
-    return jsonify({'response' : True})
 
 
 '''
@@ -149,16 +198,21 @@ def solution():
         
         emailAddress = session['emailAddress']
         
-        collection = db['Users']
-        user = collection.find_one({"emailAddress" : emailAddress})
-        
-        ai=gen.Solution(skinType=user['skinType'], skinTone=user['skinTone'])
-        responce = ai.geminiResponce(imagePath=saveDir)
     
-    if responce:
-        return jsonify({'response' : responce})
+        _, user_ = user.getUserByEmail(emailAddress=emailAddress)
+        
+        ai=gen.Solution(skinType=user_['skinType'], skinTone=user_['skinTone'])
+        promt = ai.geminiResponce(imagePath=saveDir)
+    
+    if promt:
+        responce={"status": "success", 'prompt': promt}
+        
     else:
-        return jsonify({'responce' : False})
+        responce={"status": "success", 'prompt': None}
+
+    
+    return jsonify({"responce" : responce})
+
 
 
 if __name__=="__main__":

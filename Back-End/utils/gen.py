@@ -2,11 +2,14 @@ import os
 import google.generativeai as genai
 from langchain.prompts import PromptTemplate
 import PIL
+from dotenv import load_dotenv
+
+load_dotenv(".env")
 
 
 class Solution(object):
     def __init__(self, skinType : str, skinTone : str) -> None:
-        os.environ['GOOGLE_API_KEY']= r"AIzaSyBUd99N6xQQmy-233yhwEJnLXH_4oNRJzE" #API KEY
+        os.environ['GOOGLE_API_KEY']= os.getenv('GOOGLE_API_KEY')
         genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
         
         generation_config={
