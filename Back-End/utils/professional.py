@@ -5,9 +5,9 @@ from pymongo import MongoClient
 load_dotenv(".env")
 
 
-class Product(object):
+class Professional(object):
     @classmethod
-    def connectDB(cls, databaseName = 'Glova', collectionName='Products'):
+    def connectDB(cls, databaseName = 'Glova', collectionName='Professional'):
         try:
             client=MongoClient(os.getenv('MONGO_CLIENT'))
             db=client[databaseName]
@@ -20,5 +20,5 @@ class Product(object):
         return client, collection, connectionStatus
     
     
-    def filterProducts(self, style='ranking'):
+    def filterProfessional(self, style='ranking'):
         pass

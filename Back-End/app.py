@@ -6,6 +6,7 @@ import werkzeug
 from utils.data import ConvertData
 from utils.user import User
 from utils.product import Product
+from utils.professional import Professional
 import utils.gen as gen
 
 load_dotenv(".env")
@@ -36,6 +37,7 @@ def signIn():
         
         
     return jsonify({"responce": responce})
+
 
 
 @app.route("/validate-password", methods=['GET', 'POST'])
@@ -112,8 +114,8 @@ def update():
         if not address is None:
             status=user.updateUser(emailAddress=emailAddress, address=address)
             
-    
         responce={"status" : status, "username" : session['username']}
+        
     else:
         responce={"status" : status, "username" : None}
             
