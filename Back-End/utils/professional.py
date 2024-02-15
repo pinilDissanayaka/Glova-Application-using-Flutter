@@ -7,7 +7,7 @@ load_dotenv(".env")
 
 class Professional(object):
     @classmethod
-    def connectDB(cls, databaseName = 'Glova', collectionName='Professional'):
+    def connectDB(cls, databaseName = 'Glova', collectionName='Professionals'):
         try:
             client=MongoClient(os.getenv('MONGO_CLIENT'))
             db=client[databaseName]
